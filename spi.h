@@ -146,7 +146,15 @@ namespace Spi // Namespace definition
                 }
                 return return_code;
             }
-        
+            uint8_t transiever(uint8_t data)
+            {
+                // Load data into SPDR initiating transfer
+                SPDR = data;
+                //Wait until transmission complete
+                while(!(SPSR)&(1<<SPIF));
+                // Return received data.
+                return(SPDR);
+            }
     };
 }
 #endif // End of ifndef SPI_H
