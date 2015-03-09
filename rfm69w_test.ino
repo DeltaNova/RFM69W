@@ -87,5 +87,5 @@ void loop()
     test_singleByteRead(0x2d,0x03);
     test_singleByteWrite(0x2d,0x04);
     test_singleByteRead(0x2d,0x04);
-    test_singleByteWrite(0x2d,0x04);
+    test_singleByteWrite(0x2d,0x03);
 }
