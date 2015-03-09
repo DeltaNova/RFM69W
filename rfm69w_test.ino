@@ -40,62 +40,52 @@ void singleByteWrite(uint8_t byteAddr, uint8_t dataByte)
     return;
 }
 
+void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect)
+{
+    // SPI - singleByteRead
+    Serial.println("SPI - singleByteRead");
+    uint8_t datain = singleByteRead(byteAddr);
+    Serial.print("ADDR: ");
+    Serial.println(byteAddr,HEX);
+    Serial.print("Expected Data: ");
+    Serial.println(byteExpect,HEX);
+    Serial.print("Actual Data: ");
+    Serial.println(datain,HEX);
+    Serial.println();
+    delay(1000);
+}
+
+void test_spiReg()
+{
+    //Print the SPI Registers to Serial Output
+    Serial.println("SPI Registers");
+    Serial.print("SPCR: ");
+    Serial.println(SPCR,BIN);
+    Serial.print("SPSR: ");
+    Serial.println(SPSR,BIN);
+    Serial.println();
+    delay(1000);
+}
+
+void test_singleByteWrite(uint8_t byteAddr, uint8_t dataByte)
+{
+    // SPI - singleByteWrite
+    Serial.println("SPI - singleByteWrite");
+    singleByteWrite(byteAddr,dataByte);
+    Serial.print("ADDR: ");
+    Serial.println(byteAddr,HEX);
+    Serial.print("Sent Data: ");
+    Serial.println(dataByte);
+    Serial.println();
+    delay(1000);
+}
+
 void loop()
 {
-        //Print the SPI Registers to Serial Output
-        Serial.println("SPI Registers");
-        Serial.print("SPCR: ");
-        Serial.println(SPCR,BIN);
-        Serial.print("SPSR: ");
-        Serial.println(SPSR,BIN);
-        delay(1000);
 
-        // SPI - singleByteRead
-        Serial.println("SPI - singleByteRead");
-        uint8_t datain = singleByteRead(0x2d);
-        Serial.print("ADDR: ");
-        Serial.println(0x2d,HEX);
-        Serial.println("Expected Data 0x03");
-        Serial.print("Actual Data: ");
-        Serial.println(datain,HEX);
-        Serial.println();
-        delay(1000);
-        
-        // SPI - singleByteWrite
-        Serial.println("SPI - singleByteWrite");
-        singleByteWrite(0x2d,0x04);
-        Serial.print("ADDR: ");
-        Serial.println(0x2d,HEX);
-        Serial.print("Sent Data: ");
-        Serial.println(0x04);
-        Serial.println();
-        delay(1000);
-        
-        // SPI - singleByteRead
-        Serial.println("SPI - singleByteRead");
-        uint8_t datain2 = singleByteRead(0x2d);
-        Serial.print("ADDR: ");
-        Serial.println(0x2d,HEX);
-        Serial.println("Expected Data 0x04");
-        Serial.print("Actual Data: ");
-        Serial.println(datain2,HEX);
-        Serial.println();
-        delay(1000);
-        // SPI - singleByteWrite
-        Serial.println("SPI - singleByteWrite");
-        singleByteWrite(0x2d,0x03);
-        Serial.print("ADDR: ");
-        Serial.println(0x2d,HEX);
-        Serial.print("Sent Data: ");
-        Serial.println(0x03);
-        Serial.println();
-        delay(1000);
-
-
-
-
-
-
-
-
+    test_spiReg();
+    test_singleByteRead(0x2d,0x03);
+    test_singleByteWrite(0x2d,0x04);
+    test_singleByteRead(0x2d,0x04);
+    test_singleByteWrite(0x2d,0x04);
 }
