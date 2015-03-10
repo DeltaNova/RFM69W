@@ -12,6 +12,9 @@
 BOARD := atmega328
 #BOARD := pro5v
 
+# Adjust library path as required (space separated)
+LIBRARYPATH := /usr/share/arduino/libraries ~/Git/RFM69W/libraries
+
 # Include Arduino Makefile
 # ========================
 include ~/bin/arduino.mk
