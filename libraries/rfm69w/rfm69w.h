@@ -3,7 +3,7 @@
 // Author: M. Tunstall
 // NOTE: This is heavily commented for my own learning/reference.
 #ifndef RFM69W_H // Header guards
-#define rfm69w.h
+#define rfm69w_h
 
 class RFM69W
 {
@@ -99,21 +99,21 @@ class RFM69W
             RegPacketConfig2 = 0x3d, // Packet Mode Settings
             
             RegAesKey1      = 0x3e, // AES Cypher Key Byte1
-            RegAesKey1      = 0x3f, // AES Cypher Key Byte2
-            RegAesKey1      = 0x40, // AES Cypher Key Byte3
-            RegAesKey1      = 0x41, // AES Cypher Key Byte4
-            RegAesKey1      = 0x42, // AES Cypher Key Byte5
-            RegAesKey1      = 0x43, // AES Cypher Key Byte6
-            RegAesKey1      = 0x44, // AES Cypher Key Byte7
-            RegAesKey1      = 0x45, // AES Cypher Key Byte8
-            RegAesKey1      = 0x46, // AES Cypher Key Byte9
-            RegAesKey1      = 0x47, // AES Cypher Key Byte10
-            RegAesKey1      = 0x48, // AES Cypher Key Byte11
-            RegAesKey1      = 0x49, // AES Cypher Key Byte12
-            RegAesKey1      = 0x4a, // AES Cypher Key Byte13
-            RegAesKey1      = 0x4b, // AES Cypher Key Byte14
-            RegAesKey1      = 0x4c, // AES Cypher Key Byte15
-            RegAesKey1      = 0x4d, // AES Cypher Key Byte16
+            RegAesKey2      = 0x3f, // AES Cypher Key Byte2
+            RegAesKey3      = 0x40, // AES Cypher Key Byte3
+            RegAesKey4      = 0x41, // AES Cypher Key Byte4
+            RegAesKey5      = 0x42, // AES Cypher Key Byte5
+            RegAesKey6      = 0x43, // AES Cypher Key Byte6
+            RegAesKey7      = 0x44, // AES Cypher Key Byte7
+            RegAesKey8      = 0x45, // AES Cypher Key Byte8
+            RegAesKey9      = 0x46, // AES Cypher Key Byte9
+            RegAesKey10     = 0x47, // AES Cypher Key Byte10
+            RegAesKey11     = 0x48, // AES Cypher Key Byte11
+            RegAesKey12     = 0x49, // AES Cypher Key Byte12
+            RegAesKey13     = 0x4a, // AES Cypher Key Byte13
+            RegAesKey14     = 0x4b, // AES Cypher Key Byte14
+            RegAesKey15     = 0x4c, // AES Cypher Key Byte15
+            RegAesKey16     = 0x4d, // AES Cypher Key Byte16
             
             RegTemp1        = 0x4e, // Temperature Sensor Control
             RegTemp2        = 0x4f, // Temperature readout
@@ -123,13 +123,13 @@ class RFM69W
             RegTestPa2      = 0x5c, // High Power PA settings
             RegTestDagc     = 0x6f, // Fading Margin Improvement
             RegTestAfc      = 0x71  // AFC ofset for low modulation index AFC
-        }
+        };
     private: // accessed by member functions but not derived classes.
 
     public: // accessed by anybody.
     
     
-}
+};
 
 
 #endif //RFM69W_H
