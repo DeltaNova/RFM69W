@@ -4,6 +4,7 @@
 // NOTE: This is heavily commented for my own learning/reference.
 
 #include "spi.h" // Include my spi library.
+#include "rfm69w.h" // Include my rfm69w library
 #include <Wire.h> // Used for serial comms.
 #include <stdint.h> // Enable fixed width integers.
 
