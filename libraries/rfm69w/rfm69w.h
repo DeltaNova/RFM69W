@@ -4,6 +4,7 @@
 // NOTE: This is heavily commented for my own learning/reference.
 #ifndef RFM69W_H // Header guards
 #define rfm69w_h
+#define RFM69W_H
 
 class RFM69W
 {
