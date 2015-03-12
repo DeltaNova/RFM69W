@@ -14,12 +14,9 @@ RFM69W RFM; // Create Global instance of RFM69W Class
 void setup()
 {
     Serial.begin(19200); // Setup Serial Comms
-//    SPI.InitMaster(); // Initialise as Master SPI Node
-//    SPI.SetClock(1); // Change the SPI Clock rate.
-//    SPI.EnableSPI(); // Enable SPI Communication.
+    delay(2000); // Wait before entering loop
+    RFM.setReg(); // Setup the registers for the RFM69
 }
-
-
 
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect)
 {
@@ -61,16 +58,10 @@ void test_singleByteWrite(uint8_t byteAddr, uint8_t dataByte)
     delay(1000);
 }
 
-void loop()
+void test_Reg()
 {
-    delay(2000);
-    RFM.setReg();
-    test_spiReg();
-    test_singleByteRead(0x2d,0x03);
-    test_singleByteWrite(0x2d,0x04);
-    test_singleByteRead(0x2d,0x04);
-    test_singleByteWrite(0x2d,0x03);
-    Serial.println();
+    // Code used to test the register values on the rfm69w
+    // Assumes working SPI connection
     Serial.println("Check Reg Init");
     test_singleByteRead(RegLna,0x88);
     test_singleByteRead(RegRxBw,0x55);
@@ -90,5 +81,23 @@ void loop()
     test_singleByteRead(RegTestDagc,0x30);
     Serial.println("Check Custom Reg Init");
     test_singleByteRead(RegDataModul,0x08);
+}
+
+void test_SPI()
+{
+    test_spiReg();
+    test_singleByteRead(0x2d,0x03);
+    test_singleByteWrite(0x2d,0x04);
+    test_singleByteRead(0x2d,0x04);
+    test_singleByteWrite(0x2d,0x03);
+    Serial.println();
+    
+}
+
+void loop()
+{
+    delay(2000); // Pause between loops
+    test_SPI();
+    test_Reg();
     
 }
