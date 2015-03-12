@@ -15,24 +15,21 @@ class RFM69W
     protected: // accessed by member functions and derived classes.
         Spi SPI; // Instance of the SPI interface.
     private: // accessed by member functions but not derived classes.
-
         void setDefaultReg(); // Load Register Recommended Defaults
         void setCustomReg();  // Load Custom Register Settings
-
     public: // accessed by anybody.
         RFM69W() //Default constructor
         {
             SPI.InitMaster(); // Initialise as Master SPI Node
             SPI.SetClock(1); // Change the SPI Clock rate.
             SPI.EnableSPI(); // Enable SPI Communication.
-            
             // DEV NOTE: It doesn't seem possible to load the default
             // register values from within the constructor.
         }
-
         void setReg(); // Wrapper to load Custom & Recommended Defaults
         uint8_t singleByteRead(uint8_t byteAddr);
         void singleByteWrite(uint8_t byteAddr, uint8_t dataByte);
+        void setNodeAdr(uint8_t Adr); // Set the Node Address to be included with data packet.
     
 };
 

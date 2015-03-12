@@ -48,6 +48,11 @@ void RFM69W::setDefaultReg()
     singleByteWrite(RegTestDagc,0x30);
     
 };
+void RFM69W::setNodeAdr(uint8_t Adr)
+{
+    singleByteWrite(RegNodeAdrs, Adr);
+};
+
 void RFM69W::setCustomReg()
 {
     // Write Custom Setup Values to registers
@@ -55,6 +60,14 @@ void RFM69W::setCustomReg()
     // Data Modulation
     // - Packet Mode, OOK, No Shaping
     singleByteWrite(RegDataModul,0x08);
+    
+    // DIO0 Mapping - Starup value, want to change during operation
+    //              - depending on mode
+    
+    // Packet Config - Fixed Length 8 bytes
+    //singleByteWrite(RegDataModul,0x10); // Defines Fixed Packet (Default)
+    singleByteWrite(RegPayloadLength,0x08); // Set Fixed Packet Length to 8 bytes.
+    
 };
 void RFM69W::setReg()
 {
