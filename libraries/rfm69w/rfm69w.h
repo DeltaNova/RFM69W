@@ -96,7 +96,7 @@ class RFM69W
             RegNodeAdrs     = 0x39, // Node Address
             RegBroadcastAdrs = 0x3a, // Broadcase Address
             RegAutoModes    = 0x3b, // Auto modes settings
-            RefFifoThresh   = 0x3c, // FIFO theshold, TX start condition
+            RegFifoThresh   = 0x3c, // FIFO theshold, TX start condition
             RegPacketConfig2 = 0x3d, // Packet Mode Settings
             
             RegAesKey1      = 0x3e, // AES Cypher Key Byte1
