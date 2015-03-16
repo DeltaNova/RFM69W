@@ -68,6 +68,13 @@ void RFM69W::setCustomReg()
     //singleByteWrite(RegDataModul,0x10); // Defines Fixed Packet (Default)
     singleByteWrite(RegPayloadLength,0x08); // Set Fixed Packet Length to 8 bytes.
     
+    // TODO: Enable Carrier Frequency to be adjusted, currently hardcoded.
+    
+    // Set Carrier Frequency to 867,999,975.2 Hz
+    singleByteWrite(RegFrfMsb,0xd9);
+    singleByteWrite(RegFrfMid,0x00);
+    singleByteWrite(RegFrfLsb,0x24);
+    
 };
 void RFM69W::setReg()
 {
