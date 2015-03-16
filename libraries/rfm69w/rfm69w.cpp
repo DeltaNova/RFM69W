@@ -63,6 +63,8 @@ void RFM69W::setCustomReg()
     
     // DIO0 Mapping - Starup value, want to change during operation
     //              - depending on mode
+    singleByteWrite(RegDioMapping1,0x00); // TODO: Confirm best initial state.
+    
     
     // Packet Config - Fixed Length 8 bytes
     //singleByteWrite(RegDataModul,0x10); // Defines Fixed Packet (Default)
@@ -75,6 +77,8 @@ void RFM69W::setCustomReg()
     singleByteWrite(RegFrfMid,0x00);
     singleByteWrite(RegFrfLsb,0x24);
     
+    // Set DIO4/5, Disable Clk Out - None of these currently used/connected
+    singleByteWrite(RegDioMapping2,0x07);
 };
 
 void RFM69W::calOsc()
