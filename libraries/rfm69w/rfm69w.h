@@ -30,6 +30,7 @@ class RFM69W
         uint8_t singleByteRead(uint8_t byteAddr);
         void singleByteWrite(uint8_t byteAddr, uint8_t dataByte);
         void setNodeAdr(uint8_t Adr); // Set the Node Address to be included with data packet.
+        void calOsc(); // Calibrate RC Oscillator
     
 };
 

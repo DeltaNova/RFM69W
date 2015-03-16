@@ -76,6 +76,15 @@ void RFM69W::setCustomReg()
     singleByteWrite(RegFrfLsb,0x24);
     
 };
+
+void RFM69W::calOsc()
+{
+    // TODO: Calibrate RC Oscillator
+    singleByteWrite(RegOsc1,0x80); // Trigger cal operation
+    // Reg will read 0x01 whilst cal in progress.
+    // Reg will read 0x41 when cal complete.
+}
+
 void RFM69W::setReg()
 {
     // Wrapper for register setup
