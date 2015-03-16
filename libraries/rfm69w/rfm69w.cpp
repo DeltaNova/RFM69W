@@ -57,6 +57,8 @@ void RFM69W::setCustomReg()
 {
     // Write Custom Setup Values to registers
 
+    // TODO: Move this out of library into application code.
+
     // Data Modulation
     // - Packet Mode, OOK, No Shaping
     singleByteWrite(RegDataModul,0x08);

@@ -94,10 +94,21 @@ void test_SPI()
     
 }
 
+void ping()
+{
+    // Sends a test packet from RFM69W
+}
+
+void listen()
+{
+    // Listens for an incomming packet via RFM69W
+}
+
 void loop()
 {
     delay(2000); // Pause between loops
     test_SPI();
     test_Reg();
+    ping();
     
 }
