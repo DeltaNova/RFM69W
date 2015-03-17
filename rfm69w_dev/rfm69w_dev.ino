@@ -15,7 +15,7 @@ void setup()
 {
     Serial.begin(19200); // Setup Serial Comms
     delay(2000); // Wait before entering loop
-    RFM.setReg(); // Setup the registers for the RFM69
+    RFM.setReg(); // Setup the registers & initial mode for the RFM69
 }
 
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect)
@@ -96,7 +96,44 @@ void test_SPI()
 
 void ping()
 {
-    // Sends a test packet from RFM69W
+    // Sends test packet #1 from RFM69W
+    
+    // Load data into FIFO Register
+    RFM.singleByteWrite(RegFifo,'H');
+    RFM.singleByteWrite(RegFifo,'E');
+    RFM.singleByteWrite(RegFifo,'L');
+    RFM.singleByteWrite(RegFifo,'L');
+    RFM.singleByteWrite(RegFifo,'O');
+    RFM.singleByteWrite(RegFifo,'_');
+    
+}
+
+void ping2()
+{
+    // Sends test packet #2 from RFM69W
+    
+    // Load data into FIFO Register
+    RFM.singleByteWrite(RegFifo,'W');
+    RFM.singleByteWrite(RegFifo,'O');
+    RFM.singleByteWrite(RegFifo,'R');
+    RFM.singleByteWrite(RegFifo,'L');
+    RFM.singleByteWrite(RegFifo,'D');
+    RFM.singleByteWrite(RegFifo,'_');
+    
+}
+
+void ping3()
+{
+    // Sends test packet #3 from RFM69W
+    
+    // Load data into FIFO Register
+    RFM.singleByteWrite(RegFifo,'1');
+    RFM.singleByteWrite(RegFifo,'2');
+    RFM.singleByteWrite(RegFifo,'3');
+    RFM.singleByteWrite(RegFifo,'4');
+    RFM.singleByteWrite(RegFifo,'5');
+    RFM.singleByteWrite(RegFifo,'_');
+    
 }
 
 void listen()
@@ -106,9 +143,23 @@ void listen()
 
 void loop()
 {
-    delay(2000); // Pause between loops
-    test_SPI();
-    test_Reg();
+    
+    // The SPI communication and registers have been set by setup()
+    Serial.println("Start: ");
+    // The RFM69W should be in Sleep mode.
+    // Load bytes to transmit into the FIFO register.
     ping();
+    // The data will be sent once the conditions for transmitting have been met.
+    // With packet mode and data already in the FIFO buffer this should be met as soon as transmit mode is enabled.
+    RFM.modeTransmit();
+    // TODO: Add a check to see if packet sent before continuing. 
+    // Only 6 bytes of user data being sent at 4.8kbps
+    // Use a brief (1 second) delay, this should be enough time to complete send.
+    delay(1000);
+    RFM.modeSleep(); // Return to Sleep mode.
+    //test_SPI();
+    //test_Reg();
+    Serial.println("End: ");
+    delay(15000); // Pause between loops (5 seconds).
     
 }
