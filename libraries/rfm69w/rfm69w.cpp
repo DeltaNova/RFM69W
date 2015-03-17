@@ -81,6 +81,7 @@ void RFM69W::setCustomReg()
     
     // Set DIO4/5, Disable Clk Out - None of these currently used/connected
     singleByteWrite(RegDioMapping2,0x07);
+       
 };
 
 void RFM69W::calOsc()
@@ -89,14 +90,16 @@ void RFM69W::calOsc()
     singleByteWrite(RegOsc1,0x80); // Trigger cal operation
     // Reg will read 0x01 whilst cal in progress.
     // Reg will read 0x41 when cal complete.
-}
+};
 
 void RFM69W::setReg()
 {
     // Wrapper for register setup
     setDefaultReg();
-    setCustomReg();  
+    setCustomReg();
+    modeSleep(); // Set to sleep mode  
 };
+
 uint8_t RFM69W::singleByteRead(uint8_t byteAddr)
 {
     // Read a single byte from an address over the SPI interface
@@ -106,7 +109,7 @@ uint8_t RFM69W::singleByteRead(uint8_t byteAddr)
     readByte = SPI.Transiever(0); // Pad the shift register to get data.
     SPI.DeselectSlave();//Set Slave Select line high
     return readByte;
-}
+};
 
 void RFM69W::singleByteWrite(uint8_t byteAddr, uint8_t dataByte)
 {
@@ -118,4 +121,24 @@ void RFM69W::singleByteWrite(uint8_t byteAddr, uint8_t dataByte)
     SPI.Transiever(dataByte);   // Send the data byte.
     SPI.DeselectSlave(); // Slave Select line high
     return;
-}
+};
+
+void RFM69W::modeTransmit()
+{
+    singleByteWrite(RegOpMode,0x0C);
+};
+
+void RFM69W::modeReceive()
+{
+    singleByteWrite(RegOpMode,0x10);
+};
+
+void RFM69W::modeSleep()
+{
+    singleByteWrite(RegOpMode,0x00);
+};
+
+void RFM69W::modeStandby()
+{
+    singleByteWrite(RegOpMode,0x04);
+};

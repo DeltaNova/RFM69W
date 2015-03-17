@@ -31,7 +31,17 @@ class RFM69W
         void singleByteWrite(uint8_t byteAddr, uint8_t dataByte);
         void setNodeAdr(uint8_t Adr); // Set the Node Address to be included with data packet.
         void calOsc(); // Calibrate RC Oscillator
+        
         // TODO: Add function to adjust transmit power.
+        
+        // TODO: Add function to change to transmit mode.
+        void modeTransmit();
+        // TODO: Add function to change to receive mode,
+        void modeReceive();
+        // TODO: Add function to change to sleep mode.
+        void modeSleep();
+        // TODO: Add function to change to standby mode.
+        void modeStandby();
     
 };
 
