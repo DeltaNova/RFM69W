@@ -8,17 +8,48 @@
 #include <Wire.h> // Used for serial comms.
 #include <stdint.h> // Enable fixed width integers.
 #include "rfm69w_reg.h" // Register reference for rfm69w
+#include <avr/interrupt.h> // Required for interrupts.
+
+// Function Declarations
+void setup_int();
+void listen();
 
 //Spi SPI;   // Create Global instance of the Spi Class
 RFM69W RFM; // Create Global instance of RFM69W Class
+uint8_t intFlag = 0x00; // Setup a flag for monitoring the interrupt.
 void setup()
 {
     Serial.begin(19200); // Setup Serial Comms
     delay(2000); // Wait before entering loop
     RFM.setReg(); // Setup the registers & initial mode for the RFM69
     RFM.modeReceive();
+    setup_int();
 }
 
+void setup_int()
+{
+    DDRB &= ~(1<<DDB1); // Set PB1 as input
+    
+    // Not using internal pullups as we want to trigger from a logic 1
+    // RFM69W DIO0 is logic 0 until set. Pull down resistor not used.
+    //PORTB |= (1<<PORTB1); // Enable internal pullup resistor
+    PCICR |= (1<<PCIE0); // Enable PCMSK0 covering PCINT[7:0]
+    PCMSK0 |= (1<<PCINT1); // Set the mask to only interrupt on PCINT1
+    sei(); // Enable interrupts
+}
+
+ISR (PCINT0_vect) // PCINT0 is vector for PCINT[7:0]
+{
+    // Dev Note: Serial.println() commands cannot be used within an interrupt vector.
+    /* 
+        The ISR will set a flag that can be tested by the main loop.
+        The interrupt is triggered by DIO0 on RFM69W.
+        Setting a local flag via this interrupt allows the monitoring of
+        RFM69W without the need to constantly read the register statuses 
+        over the SPI bus. 
+    */
+    intFlag = 0xff; // Set interrupt flag.
+}
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect)
 {
     // SPI - singleByteRead
@@ -141,7 +172,6 @@ void listen()
 {
     // Listens for an incomming packet via RFM69W
     // Read the Payload Ready bit from RegIrqFlags2 to see if any data
-    
     Serial.println("Start Listening: ");
     
     while (RFM.singleByteRead(RegIrqFlags2) & 0x04)
@@ -151,6 +181,7 @@ void listen()
         Serial.println(RFM.singleByteRead(RegFifo));
     }
     Serial.println("Stop Listening.");
+    intFlag = 0x00; // Reset interrupt flag
 }
 
 void loop()
@@ -174,6 +205,12 @@ void loop()
     Serial.println("End: ");
     delay(15000); // Pause between loops (5 seconds).
     */
-    listen();
+    //listen();
+    while (intFlag == 0xff)
+    {
+        listen();
+    }
+    //Serial.println("Loop Wait");
+    
     
 }
