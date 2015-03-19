@@ -124,8 +124,11 @@ void RFM69W::singleByteWrite(uint8_t byteAddr, uint8_t dataByte)
 };
 
 void RFM69W::modeTransmit()
-{
+{   // Set Op Mode
     singleByteWrite(RegOpMode,0x0C);
+    // Set DIO Map
+    // DIO0 will indicate PacketSent in Tx Mode
+    singleByteWrite(RegDioMapping1,0x00);
 };
 
 void RFM69W::modeReceive()
