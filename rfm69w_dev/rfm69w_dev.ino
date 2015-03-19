@@ -16,6 +16,7 @@ void setup()
     Serial.begin(19200); // Setup Serial Comms
     delay(2000); // Wait before entering loop
     RFM.setReg(); // Setup the registers & initial mode for the RFM69
+    RFM.modeReceive();
 }
 
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect)
@@ -139,11 +140,22 @@ void ping3()
 void listen()
 {
     // Listens for an incomming packet via RFM69W
+    // Read the Payload Ready bit from RegIrqFlags2 to see if any data
+    
+    Serial.println("Start Listening: ");
+    
+    while (RFM.singleByteRead(RegIrqFlags2) & 0x04)
+    {
+        Serial.print("Rec: ");
+        
+        Serial.println(RFM.singleByteRead(RegFifo));
+    }
+    Serial.println("Stop Listening.");
 }
 
 void loop()
 {
-    
+    /*
     // The SPI communication and registers have been set by setup()
     Serial.println("Start: ");
     // The RFM69W should be in Sleep mode.
@@ -161,5 +173,7 @@ void loop()
     //test_Reg();
     Serial.println("End: ");
     delay(15000); // Pause between loops (5 seconds).
+    */
+    listen();
     
 }
