@@ -130,7 +130,11 @@ void RFM69W::modeTransmit()
 
 void RFM69W::modeReceive()
 {
+    // Set Op Mode
     singleByteWrite(RegOpMode,0x10);
+    // Set DIO Map
+    // DIO0 will indicate PayloadReady in Rx Mode
+    singleByteWrite(RegDioMapping1,0x40);
 };
 
 void RFM69W::modeSleep()
