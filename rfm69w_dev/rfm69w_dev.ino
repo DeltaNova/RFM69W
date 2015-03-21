@@ -28,11 +28,11 @@ void setup()
 
 void setup_int()
 {
-    DDRB &= ~(1<<DDB1); // Set PB1 as input
-    
-    // Not using internal pullups as we want to trigger from a logic 1
+    // Set PB1 as interrupt input.
+    DDRB &= ~(1<<DDB1);
+
+    // Not using internal pullup on PB1 as we want to trigger from a logic 1
     // RFM69W DIO0 is logic 0 until set. Pull down resistor not used.
-    //PORTB |= (1<<PORTB1); // Enable internal pullup resistor
     PCICR |= (1<<PCIE0); // Enable PCMSK0 covering PCINT[7:0]
     PCMSK0 |= (1<<PCINT1); // Set the mask to only interrupt on PCINT1
     sei(); // Enable interrupts
@@ -41,12 +41,12 @@ void setup_int()
 ISR (PCINT0_vect) // PCINT0 is vector for PCINT[7:0]
 {
     // Dev Note: Serial.println() commands cannot be used within an interrupt vector.
-    /* 
+    /*
         The ISR will set a flag that can be tested by the main loop.
         The interrupt is triggered by DIO0 on RFM69W.
         Setting a local flag via this interrupt allows the monitoring of
-        RFM69W without the need to constantly read the register statuses 
-        over the SPI bus. 
+        RFM69W without the need to constantly read the register statuses
+        over the SPI bus.
     */
     intFlag = 0xff; // Set interrupt flag.
 }
@@ -97,7 +97,7 @@ void test_Reg()
     Serial.println("Check Reg Init");
     test_singleByteRead(RegLna,0x88);
     test_singleByteRead(RegRxBw,0x55);
-    
+
     test_singleByteRead(RegAfcBw,0x8b);
     test_singleByteRead(RegDioMapping2,0x07);
     test_singleByteRead(RegRssiThresh,0xe4);
@@ -123,13 +123,13 @@ void test_SPI()
     test_singleByteRead(0x2d,0x04);
     test_singleByteWrite(0x2d,0x03);
     Serial.println();
-    
+
 }
 
 void ping()
 {
     // Sends test packet #1 from RFM69W
-    
+
     // Load data into FIFO Register
     RFM.singleByteWrite(RegFifo,'H');
     RFM.singleByteWrite(RegFifo,'E');
@@ -137,13 +137,13 @@ void ping()
     RFM.singleByteWrite(RegFifo,'L');
     RFM.singleByteWrite(RegFifo,'O');
     RFM.singleByteWrite(RegFifo,'_');
-    
+
 }
 
 void ping2()
 {
     // Sends test packet #2 from RFM69W
-    
+
     // Load data into FIFO Register
     RFM.singleByteWrite(RegFifo,'W');
     RFM.singleByteWrite(RegFifo,'O');
@@ -151,13 +151,13 @@ void ping2()
     RFM.singleByteWrite(RegFifo,'L');
     RFM.singleByteWrite(RegFifo,'D');
     RFM.singleByteWrite(RegFifo,'_');
-    
+
 }
 
 void ping3()
 {
     // Sends test packet #3 from RFM69W
-    
+
     // Load data into FIFO Register
     RFM.singleByteWrite(RegFifo,'1');
     RFM.singleByteWrite(RegFifo,'2');
@@ -165,7 +165,7 @@ void ping3()
     RFM.singleByteWrite(RegFifo,'4');
     RFM.singleByteWrite(RegFifo,'5');
     RFM.singleByteWrite(RegFifo,'_');
-    
+
 }
 
 void listen()
@@ -173,11 +173,11 @@ void listen()
     // Listens for an incomming packet via RFM69W
     // Read the Payload Ready bit from RegIrqFlags2 to see if any data
     Serial.println("Start Listening: ");
-    
+
     while (RFM.singleByteRead(RegIrqFlags2) & 0x04)
     {
         Serial.print("Rec: ");
-        
+
         Serial.println(RFM.singleByteRead(RegFifo));
     }
     Serial.println("Stop Listening.");
@@ -195,7 +195,7 @@ void loop()
     // The data will be sent once the conditions for transmitting have been met.
     // With packet mode and data already in the FIFO buffer this should be met as soon as transmit mode is enabled.
     RFM.modeTransmit();
-    // TODO: Add a check to see if packet sent before continuing. 
+    // TODO: Add a check to see if packet sent before continuing.
     // Only 6 bytes of user data being sent at 4.8kbps
     // Use a brief (1 second) delay, this should be enough time to complete send.
     delay(1000);
@@ -211,6 +211,5 @@ void loop()
         listen();
     }
     //Serial.println("Loop Wait");
-    
-    
+
 }
