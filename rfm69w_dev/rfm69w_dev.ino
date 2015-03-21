@@ -13,17 +13,36 @@
 // Function Declarations
 void setup_int();
 void listen();
+void setup_mode();
 
 //Spi SPI;   // Create Global instance of the Spi Class
 RFM69W RFM; // Create Global instance of RFM69W Class
 uint8_t intFlag = 0x00; // Setup a flag for monitoring the interrupt.
 void setup()
 {
+    //Set PB0 as Tx/Rx Mode select input
+    DDRB &= ~(1<<DDB0);
+    // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
+    PORTB &= ~(1<<PORTB0);
     Serial.begin(19200); // Setup Serial Comms
     delay(2000); // Wait before entering loop
     RFM.setReg(); // Setup the registers & initial mode for the RFM69
+    setup_mode(); // Determine the startup mode from status of PB0.
+    setup_int(); // Setup Interrupts
+}
+void setup_mode()
+{
+ if (PINB & (1<<PINB0))
+ {
+     // Tx Mode Selected
+     Serial.println("Tx Mode"); //DEBUG: Print "Tx Mode"
+ }
+ else
+ {
+    // Rx Mode Selected
+    Serial.println("Rx Mode"); //DEBUG: Print "Rx Mode"
     RFM.modeReceive();
-    setup_int();
+ }
 }
 
 void setup_int()
