@@ -18,6 +18,7 @@ void setup_mode();
 //Spi SPI;   // Create Global instance of the Spi Class
 RFM69W RFM; // Create Global instance of RFM69W Class
 uint8_t intFlag = 0x00; // Setup a flag for monitoring the interrupt.
+uint8_t mode = 0x00; // Node startup mode. Rx Default.
 void setup()
 {
     //Set PB0 as Tx/Rx Mode select input
@@ -32,17 +33,25 @@ void setup()
 }
 void setup_mode()
 {
- if (PINB & (1<<PINB0))
- {
-     // Tx Mode Selected
-     Serial.println("Tx Mode"); //DEBUG: Print "Tx Mode"
- }
- else
- {
-    // Rx Mode Selected
-    Serial.println("Rx Mode"); //DEBUG: Print "Rx Mode"
-    RFM.modeReceive();
- }
+    // Configure the node startup mode as a Tx or Rx.
+
+    if (PINB & (1<<PINB0))
+    {
+        // Tx Mode Selected
+        mode = 0xff; // Change node mode
+        Serial.println("Tx Mode"); //DEBUG: Print "Tx Mode"
+        // RFM69W configured to startup in sleep mode and will wake to
+        // transmit as required.
+        // TODO: Check interrupt settings / DIO0 map for sleep mode
+
+    }
+    else
+    {
+        // Rx Mode Selected
+        Serial.println("Rx Mode"); //DEBUG: Print "Rx Mode"
+        RFM.modeReceive();
+    }
+    return;
 }
 
 void setup_int()
@@ -203,32 +212,61 @@ void listen()
     intFlag = 0x00; // Reset interrupt flag
 }
 
-void loop()
+void transmit()
 {
-    /*
     // The SPI communication and registers have been set by setup()
-    Serial.println("Start: ");
+    Serial.println("Start: "); // DEBUG: Print "Start: " Start of Tx.
     // The RFM69W should be in Sleep mode.
     // Load bytes to transmit into the FIFO register.
-    ping();
+    ping();  // TODO: Add code to send a different packet.
     // The data will be sent once the conditions for transmitting have been met.
     // With packet mode and data already in the FIFO buffer this should be met as soon as transmit mode is enabled.
     RFM.modeTransmit();
     // TODO: Add a check to see if packet sent before continuing.
     // Only 6 bytes of user data being sent at 4.8kbps
     // Use a brief (1 second) delay, this should be enough time to complete send.
-    delay(1000);
+    delay(1000); // TODO: Need to add a check for end of transmit, will be quicker than needing a delay.
     RFM.modeSleep(); // Return to Sleep mode.
-    //test_SPI();
-    //test_Reg();
-    Serial.println("End: ");
-    delay(15000); // Pause between loops (5 seconds).
-    */
-    //listen();
-    while (intFlag == 0xff)
-    {
-        listen();
-    }
-    //Serial.println("Loop Wait");
+    Serial.println("End: ");  // DEBUG: Print "End: " End of Tx.
 
+}
+void transmitter()
+{
+    // Transmitter Node Loop
+    while (1)
+    {
+        transmit();
+        delay(15000); // Transmit a packet every 15 seconds.
+    }
+}
+
+void receiver()
+{
+    // Receiver Node Loop
+    while (1)
+    {
+        // If the interrupt flag has been set then listen for incomming data.
+        while (intFlag == 0xff)
+        {
+            listen();
+        }
+        //Serial.println("Loop Wait"); // DEBUG: Print "Loop Wait"
+    }
+}
+
+void loop()
+{
+    //test_SPI(); // DEBUG: Test SPI Comms
+    //test_Reg(); // DEBUG: Test RFM69W Register Values
+
+    if (mode == 0xff) // If node configured as a Transmitter.
+    {
+        // Run transmitter node loop
+        transmitter();
+    }
+    else // If node configured as a Receiver.
+    {
+        // Run receiver node loop
+        receiver();
+    }
 }
