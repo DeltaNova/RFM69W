@@ -8,16 +8,16 @@
 void RFM69W::setDefaultReg()
 {
     // Write the recommended default values into device registers
-    
+
     /*
     Recommended Defaults
-    
+
     RegLna         = 0x88
     RegRxBw        = 0x55
     RegAfcBw       = 0x8b
     RegDioMapping2 = 0x07
     RegRssiThresh  = 0xe4
-    
+
     RegSyncValue1  = 0x01
     RegSyncValue2  = 0x01
     RegSyncValue3  = 0x01
@@ -26,10 +26,10 @@ void RFM69W::setDefaultReg()
     RegSyncValue6  = 0x01
     RegSyncValue7  = 0x01
     RegSyncValue8  = 0x01
-    
+
     RegFifoThresh  = 0x8f
     RegTestDagc    = 0x30
-    
+
     */
     singleByteWrite(RegLna,0x88);
     singleByteWrite(RegRxBw,0x55);
@@ -46,7 +46,7 @@ void RFM69W::setDefaultReg()
     singleByteWrite(RegSyncValue8,0x01);
     singleByteWrite(RegFifoThresh,0x8f);
     singleByteWrite(RegTestDagc,0x30);
-    
+
 };
 void RFM69W::setNodeAdr(uint8_t Adr)
 {
@@ -62,26 +62,26 @@ void RFM69W::setCustomReg()
     // Data Modulation
     // - Packet Mode, OOK, No Shaping
     singleByteWrite(RegDataModul,0x08);
-    
+
     // DIO0 Mapping - Starup value, want to change during operation
     //              - depending on mode
     singleByteWrite(RegDioMapping1,0x00); // TODO: Confirm best initial state.
-    
-    
+
+
     // Packet Config - Fixed Length 8 bytes
     //singleByteWrite(RegDataModul,0x10); // Defines Fixed Packet (Default)
     singleByteWrite(RegPayloadLength,0x08); // Set Fixed Packet Length to 8 bytes.
-    
+
     // TODO: Enable Carrier Frequency to be adjusted, currently hardcoded.
-    
+
     // Set Carrier Frequency to 867,999,975.2 Hz
     singleByteWrite(RegFrfMsb,0xd9);
     singleByteWrite(RegFrfMid,0x00);
     singleByteWrite(RegFrfLsb,0x24);
-    
+
     // Set DIO4/5, Disable Clk Out - None of these currently used/connected
     singleByteWrite(RegDioMapping2,0x07);
-       
+
 };
 
 void RFM69W::calOsc()
@@ -97,7 +97,7 @@ void RFM69W::setReg()
     // Wrapper for register setup
     setDefaultReg();
     setCustomReg();
-    modeSleep(); // Set to sleep mode  
+    modeSleep(); // Set to sleep mode
 };
 
 uint8_t RFM69W::singleByteRead(uint8_t byteAddr)
