@@ -2,7 +2,7 @@
 // Library to use the rfm69w transeiver.
 // Author: M. Tunstall
 // NOTE: This is heavily commented for my own learning/reference.
-//#include "spi.h"
+#include "spi.h"
 #include <stdint.h> // Enable fixed width integers.
 #include "rfm69w_reg.h" // Register Addresses as a separate file
 
