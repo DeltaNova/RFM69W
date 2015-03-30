@@ -4,7 +4,7 @@
 // NOTE: This is heavily commented for my own learning/reference.
 
 #ifndef SPI_H //If spi.h hasn't been included elsewhere, define it now.
-#define SPI_H 
+#define SPI_H
 
 #include <avr/io.h> // Needed for register references
 //#include <cstdint> // Fixed width integer support (C++11)
