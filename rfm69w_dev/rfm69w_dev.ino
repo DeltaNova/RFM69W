@@ -165,7 +165,11 @@ void ping(int8_t msg)
     uint8_t tststr[] = "ERROR!";
     uint8_t tststr0[] = "Hello_";
     uint8_t tststr1[] = "World!";
-    uint8_t tststr2[] = "0123456789"; // TODO: Should this result in 2 packets being received? Only detecting one. Look at Rx code.
+    // Dev Note: Should this result in 2 packets being received? Only detecting one.
+    // - Update: Since fixed length packets are used the only the data that can be contained in the packet is sent.
+    //           It appears the act of sending a single packet clears any residual data in the FIFO.
+    //           If there is data for a follow on packet it should be sent as a separate Tx operation.
+    uint8_t tststr2[] = "0123456789ABCDEF";
 
     switch(msg)
     {
@@ -195,6 +199,7 @@ void listen()
     Serial.println("Start Listening: ");
 
     while (RFM.singleByteRead(RegIrqFlags2) & 0x04)
+    //True whilst FIFO still contains data.
     {
         Serial.print("Rec: ");
 
