@@ -154,46 +154,38 @@ void test_SPI()
 
 }
 
-void ping()
+void ping(int8_t msg)
 {
-    // Sends test packet #1 from RFM69W
+    // Load selected data into FIFO Register for transmission
 
-    // Load data into FIFO Register
-    RFM.singleByteWrite(RegFifo,'H');
-    RFM.singleByteWrite(RegFifo,'E');
-    RFM.singleByteWrite(RegFifo,'L');
-    RFM.singleByteWrite(RegFifo,'L');
-    RFM.singleByteWrite(RegFifo,'O');
-    RFM.singleByteWrite(RegFifo,'_');
+    // Sends teststring stored in array via RFM69W
+    // Workout how many characters there are to send.
+    // 1 is deducted from count to remove the trailing null char.
 
-}
+    uint8_t tststr[] = "ERROR!";
+    uint8_t tststr0[] = "Hello_";
+    uint8_t tststr1[] = "World!";
+    uint8_t tststr2[] = "0123456789"; // TODO: Should this result in 2 packets being received? Only detecting one. Look at Rx code.
 
-void ping2()
-{
-    // Sends test packet #2 from RFM69W
+    switch(msg)
+    {
+    case 0:
+        for(uint8_t arrayChar =0; arrayChar < (sizeof(tststr0)-1); arrayChar++)
+            RFM.singleByteWrite(RegFifo, tststr0[arrayChar]);
+        break;
+    case 1:
+        for(uint8_t arrayChar =0; arrayChar < (sizeof(tststr1)-1); arrayChar++)
+            RFM.singleByteWrite(RegFifo, tststr1[arrayChar]);
+        break;
+    case 2:
+        for(uint8_t arrayChar =0; arrayChar < (sizeof(tststr2)-1); arrayChar++)
+            RFM.singleByteWrite(RegFifo, tststr2[arrayChar]);
+        break;
+    default:
+        for(uint8_t arrayChar =0; arrayChar < (sizeof(tststr)-1); arrayChar++)
+            RFM.singleByteWrite(RegFifo, tststr[arrayChar]);
 
-    // Load data into FIFO Register
-    RFM.singleByteWrite(RegFifo,'W');
-    RFM.singleByteWrite(RegFifo,'O');
-    RFM.singleByteWrite(RegFifo,'R');
-    RFM.singleByteWrite(RegFifo,'L');
-    RFM.singleByteWrite(RegFifo,'D');
-    RFM.singleByteWrite(RegFifo,'_');
-
-}
-
-void ping3()
-{
-    // Sends test packet #3 from RFM69W
-
-    // Load data into FIFO Register
-    RFM.singleByteWrite(RegFifo,'1');
-    RFM.singleByteWrite(RegFifo,'2');
-    RFM.singleByteWrite(RegFifo,'3');
-    RFM.singleByteWrite(RegFifo,'4');
-    RFM.singleByteWrite(RegFifo,'5');
-    RFM.singleByteWrite(RegFifo,'_');
-
+    }
 }
 
 void listen()
@@ -218,7 +210,7 @@ void transmit()
     Serial.println("Start: "); // DEBUG: Print "Start: " Start of Tx.
     // The RFM69W should be in Sleep mode.
     // Load bytes to transmit into the FIFO register.
-    ping();  // TODO: Add code to send a different packet.
+    ping(2); // Pass an int to select which msg to send.
     // The data will be sent once the conditions for transmitting have been met.
     // With packet mode and data already in the FIFO buffer this should be met as soon as transmit mode is enabled.
     RFM.modeTransmit();
