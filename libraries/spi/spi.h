@@ -26,11 +26,11 @@ DDRB = DDB7,DDB6,DDB5(SCK),DDB4(MISO),DDB3(MOSI),DDB2(SS),DDB1,DDB0
 
 class Spi
 {
-    // private members listed first as class members are private by 
+    // private members listed first as class members are private by
     // default (without the access specifier).
     private: // Can only be accessed by functions in this class
-        
-        
+
+
     public: // Can be accessed by any function in the program
         Spi() // default constructor
         {
@@ -39,7 +39,7 @@ class Spi
         }
         void InitMaster();
         void InitSlave();
-        
+
         void InterruptEnable() { SPCR |= (1<<SPIE); }
         void InterruptDisable() { SPCR &= ~(1<<SPIE); }
         void EnableSPI() { SPCR |= (1<<SPE); }
@@ -48,11 +48,11 @@ class Spi
         void LSBFirst() { SPCR &= ~(1<<DORD); }
         void SelectSlave() { PORTB &= ~(1<<PORTB2); }
         void DeselectSlave() { PORTB |= (1<<PORTB2); }
-        
-        /* 
+
+        /*
         Sets one of the SPI Modes below.
-        Returns 1 if error. 
-        
+        Returns 1 if error.
+
         SPI Modes
         0 - CPOL=0, CPHA=0
         1 - CPOL=0, CPHA=1
@@ -60,9 +60,9 @@ class Spi
         3 - CPOL=1, CPHA=1
         */
         int8_t SetMode(int8_t Mode);
-        
+
         /*
-        Mode - Clock Frequency  [fosc - freq of uC crystal] 
+        Mode - Clock Frequency  [fosc - freq of uC crystal]
         0      fosc/4 (default)
         1      fosc/16
         2      fosc/64
@@ -73,7 +73,7 @@ class Spi
         7      fosc/64
         */
         int8_t SetClock(int8_t ClockMode);
-        
+
         uint8_t Transiever(uint8_t data);
 };
 
