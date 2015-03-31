@@ -227,13 +227,26 @@ void transmit()
     // The data will be sent once the conditions for transmitting have been met.
     // With packet mode and data already in the FIFO buffer this should be met as soon as transmit mode is enabled.
     RFM.modeTransmit();
+
+
     // TODO: Add a check to see if packet sent before continuing.
+
+
     // Only 6 bytes of user data being sent at 4.8kbps
     // Use a brief (1 second) delay, this should be enough time to complete send.
-    delay(1000); // TODO: Need to add a check for end of transmit, will be quicker than needing a delay.
-    RFM.modeSleep(); // Return to Sleep mode.
+    //    delay(1000); // TODO: Need to add a check for end of transmit, will be quicker than needing a delay.
+
+    while (!(RFM.singleByteRead(RegIrqFlags2) & 0x08))
+    {
+        // Keeps checking to see if the packet sent bit is set.
+        // Once packet send is confirmed the program will continue.
+        // The reason for the loop here is that to save power the
+        // transmitter needs to be turned off as soon as possible after
+        // the program has finished with it.
+    }
+    RFM.modeSleep(); // Return to Sleep mode to save power.
     #ifdef DEBUG
-    Serial.println("End: ");  // DEBUG: Print "End: " End of Tx.
+     Serial.println("End: ");  // DEBUG: Print "End: " End of Tx.
     #endif //DEBUG
 }
 void transmitter()
