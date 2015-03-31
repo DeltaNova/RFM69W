@@ -10,6 +10,8 @@
 #include "rfm69w_reg.h" // Register reference for rfm69w
 #include <avr/interrupt.h> // Required for interrupts.
 
+#define DEBUG // Enables Debugging code. Comment out to disable debug code.
+
 // Function Declarations
 void setup_int();
 void listen();
@@ -39,7 +41,9 @@ void setup_mode()
     {
         // Tx Mode Selected
         mode = 0xff; // Change node mode
+        #ifdef DEBUG
         Serial.println("Tx Mode"); //DEBUG: Print "Tx Mode"
+        #endif //DEBUG
         // RFM69W configured to startup in sleep mode and will wake to
         // transmit as required.
         // TODO: Check interrupt settings / DIO0 map for sleep mode
@@ -48,7 +52,9 @@ void setup_mode()
     else
     {
         // Rx Mode Selected
+        #ifdef DEBUG
         Serial.println("Rx Mode"); //DEBUG: Print "Rx Mode"
+        #endif
         RFM.modeReceive();
     }
     return;
@@ -212,7 +218,9 @@ void listen()
 void transmit()
 {
     // The SPI communication and registers have been set by setup()
+    #ifdef DEBUG
     Serial.println("Start: "); // DEBUG: Print "Start: " Start of Tx.
+    #endif //DEBUG
     // The RFM69W should be in Sleep mode.
     // Load bytes to transmit into the FIFO register.
     ping(2); // Pass an int to select which msg to send.
@@ -224,8 +232,9 @@ void transmit()
     // Use a brief (1 second) delay, this should be enough time to complete send.
     delay(1000); // TODO: Need to add a check for end of transmit, will be quicker than needing a delay.
     RFM.modeSleep(); // Return to Sleep mode.
+    #ifdef DEBUG
     Serial.println("End: ");  // DEBUG: Print "End: " End of Tx.
-
+    #endif //DEBUG
 }
 void transmitter()
 {
