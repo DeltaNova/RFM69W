@@ -16,6 +16,7 @@
 void setup_int();
 void listen();
 void setup_mode();
+void setupRFM();
 
 Spi SPIx;   // Create Global instance of the Spi Class
 RFM69W RFM(SPIx); // Create Global instance of RFM69W Class
@@ -30,9 +31,36 @@ void setup()
     Serial.begin(19200); // Setup Serial Comms
     delay(2000); // Wait before entering loop
     RFM.setReg(); // Setup the registers & initial mode for the RFM69
+    setupRFM(); // Application Specific Settings RFM69W
     setup_mode(); // Determine the startup mode from status of PB0.
     setup_int(); // Setup Interrupts
 }
+
+void setupRFM()
+{
+    // Write Custom Setup Values to registers
+
+    // Data Modulation
+    // - Packet Mode, OOK, No Shaping
+    RFM.singleByteWrite(RegDataModul,0x08);
+
+    // DIO0 Mapping - Starup value, want to change during operation
+    //              - depending on mode
+    RFM.singleByteWrite(RegDioMapping1,0x00); // TODO: Confirm best initial state.
+
+    // Packet Config - Fixed Length 8 bytes
+    //singleByteWrite(RegDataModul,0x10); // Defines Fixed Packet (Default)
+    RFM.singleByteWrite(RegPayloadLength,0x08); // Set Fixed Packet Length to 8 bytes.
+
+    // Set Carrier Frequency to 867,999,975.2 Hz
+    RFM.singleByteWrite(RegFrfMsb,0xd9);
+    RFM.singleByteWrite(RegFrfMid,0x00);
+    RFM.singleByteWrite(RegFrfLsb,0x24);
+
+    // Set DIO4/5, Disable Clk Out - None of these currently used/connected
+    RFM.singleByteWrite(RegDioMapping2,0x07);
+}
+
 void setup_mode()
 {
     // Configure the node startup mode as a Tx or Rx.

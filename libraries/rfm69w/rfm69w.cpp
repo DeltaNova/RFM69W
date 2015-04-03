@@ -8,29 +8,6 @@
 void RFM69W::setDefaultReg()
 {
     // Write the recommended default values into device registers
-
-    /*
-    Recommended Defaults
-
-    RegLna         = 0x88
-    RegRxBw        = 0x55
-    RegAfcBw       = 0x8b
-    RegDioMapping2 = 0x07
-    RegRssiThresh  = 0xe4
-
-    RegSyncValue1  = 0x01
-    RegSyncValue2  = 0x01
-    RegSyncValue3  = 0x01
-    RegSyncValue4  = 0x01
-    RegSyncValue5  = 0x01
-    RegSyncValue6  = 0x01
-    RegSyncValue7  = 0x01
-    RegSyncValue8  = 0x01
-
-    RegFifoThresh  = 0x8f
-    RegTestDagc    = 0x30
-
-    */
     singleByteWrite(RegLna,0x88);
     singleByteWrite(RegRxBw,0x55);
     singleByteWrite(RegAfcBw,0x8b);
@@ -46,13 +23,13 @@ void RFM69W::setDefaultReg()
     singleByteWrite(RegSyncValue8,0x01);
     singleByteWrite(RegFifoThresh,0x8f);
     singleByteWrite(RegTestDagc,0x30);
-
 };
+
 void RFM69W::setNodeAdr(uint8_t Adr)
 {
     singleByteWrite(RegNodeAdrs, Adr);
 };
-
+/*
 void RFM69W::setCustomReg()
 {
     // Write Custom Setup Values to registers
@@ -83,7 +60,7 @@ void RFM69W::setCustomReg()
     singleByteWrite(RegDioMapping2,0x07);
 
 };
-
+*/
 void RFM69W::calOsc()
 {
     // TODO: Calibrate RC Oscillator
@@ -96,7 +73,7 @@ void RFM69W::setReg()
 {
     // Wrapper for register setup
     setDefaultReg();
-    setCustomReg();
+    //setCustomReg(); // Moved to application code.
     modeSleep(); // Set to sleep mode
 };
 
