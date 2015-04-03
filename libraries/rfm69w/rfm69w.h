@@ -17,7 +17,6 @@ class RFM69W
 
     private: // accessed by member functions but not derived classes.
         void setDefaultReg(); // Load Register Recommended Defaults
-        void setCustomReg();  // Load Custom Register Settings
     public: // accessed by anybody.
         RFM69W(Spi& SPIx) : SPI(SPIx) //Default constructor
         {

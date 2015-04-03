@@ -29,38 +29,7 @@ void RFM69W::setNodeAdr(uint8_t Adr)
 {
     singleByteWrite(RegNodeAdrs, Adr);
 };
-/*
-void RFM69W::setCustomReg()
-{
-    // Write Custom Setup Values to registers
 
-    // TODO: Move this out of library into application code.
-
-    // Data Modulation
-    // - Packet Mode, OOK, No Shaping
-    singleByteWrite(RegDataModul,0x08);
-
-    // DIO0 Mapping - Starup value, want to change during operation
-    //              - depending on mode
-    singleByteWrite(RegDioMapping1,0x00); // TODO: Confirm best initial state.
-
-
-    // Packet Config - Fixed Length 8 bytes
-    //singleByteWrite(RegDataModul,0x10); // Defines Fixed Packet (Default)
-    singleByteWrite(RegPayloadLength,0x08); // Set Fixed Packet Length to 8 bytes.
-
-    // TODO: Enable Carrier Frequency to be adjusted, currently hardcoded.
-
-    // Set Carrier Frequency to 867,999,975.2 Hz
-    singleByteWrite(RegFrfMsb,0xd9);
-    singleByteWrite(RegFrfMid,0x00);
-    singleByteWrite(RegFrfLsb,0x24);
-
-    // Set DIO4/5, Disable Clk Out - None of these currently used/connected
-    singleByteWrite(RegDioMapping2,0x07);
-
-};
-*/
 void RFM69W::calOsc()
 {
     // TODO: Calibrate RC Oscillator
@@ -73,7 +42,6 @@ void RFM69W::setReg()
 {
     // Wrapper for register setup
     setDefaultReg();
-    //setCustomReg(); // Moved to application code.
     modeSleep(); // Set to sleep mode
 };
 
