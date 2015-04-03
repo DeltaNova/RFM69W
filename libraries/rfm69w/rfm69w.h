@@ -35,16 +35,9 @@ class RFM69W
 
         // TODO: Add function to adjust transmit power.
 
-        // TODO: Add function to change to transmit mode.
         void modeTransmit();
-        // TODO: Add function to change to receive mode,
         void modeReceive();
-        // TODO: Add function to change to sleep mode.
         void modeSleep();
-        // TODO: Add function to change to standby mode.
         void modeStandby();
-
 };
-
-
 #endif //RFM69W_H

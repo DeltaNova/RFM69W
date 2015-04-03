@@ -64,7 +64,6 @@ void setupRFM()
 void setup_mode()
 {
     // Configure the node startup mode as a Tx or Rx.
-
     if (PINB & (1<<PINB0))
     {
         // Tx Mode Selected
@@ -75,7 +74,6 @@ void setup_mode()
         // RFM69W configured to startup in sleep mode and will wake to
         // transmit as required.
         // TODO: Check interrupt settings / DIO0 map for sleep mode
-
     }
     else
     {
@@ -92,7 +90,6 @@ void setup_int()
 {
     // Set PB1 as interrupt input.
     DDRB &= ~(1<<DDB1);
-
     // Not using internal pullup on PB1 as we want to trigger from a logic 1
     // RFM69W DIO0 is logic 0 until set. Pull down resistor not used.
     PCICR |= (1<<PCIE0); // Enable PCMSK0 covering PCINT[7:0]
@@ -159,7 +156,6 @@ void test_Reg()
     Serial.println("Check Reg Init");
     test_singleByteRead(RegLna,0x88);
     test_singleByteRead(RegRxBw,0x55);
-
     test_singleByteRead(RegAfcBw,0x8b);
     test_singleByteRead(RegDioMapping2,0x07);
     test_singleByteRead(RegRssiThresh,0xe4);
@@ -185,7 +181,6 @@ void test_SPI()
     test_singleByteRead(0x2d,0x04);
     test_singleByteWrite(0x2d,0x03);
     Serial.println();
-
 }
 
 void ping(int8_t msg)
@@ -195,7 +190,6 @@ void ping(int8_t msg)
     // Sends teststring stored in array via RFM69W
     // Workout how many characters there are to send.
     // 1 is deducted from count to remove the trailing null char.
-
     uint8_t tststr[] = "ERROR!";
     uint8_t tststr0[] = "Hello_";
     uint8_t tststr1[] = "World!";
@@ -222,7 +216,6 @@ void ping(int8_t msg)
     default:
         for(uint8_t arrayChar =0; arrayChar < (sizeof(tststr)-1); arrayChar++)
             RFM.singleByteWrite(RegFifo, tststr[arrayChar]);
-
     }
 }
 
@@ -231,12 +224,10 @@ void listen()
     // Listens for an incomming packet via RFM69W
     // Read the Payload Ready bit from RegIrqFlags2 to see if any data
     Serial.println("Start Listening: ");
-
     while (RFM.singleByteRead(RegIrqFlags2) & 0x04)
     //True whilst FIFO still contains data.
     {
         Serial.print("Rec: ");
-
         Serial.println(RFM.singleByteRead(RegFifo));
     }
     Serial.println("Stop Listening.");
@@ -252,18 +243,10 @@ void transmit()
     // The RFM69W should be in Sleep mode.
     // Load bytes to transmit into the FIFO register.
     ping(2); // Pass an int to select which msg to send.
-    // The data will be sent once the conditions for transmitting have been met.
-    // With packet mode and data already in the FIFO buffer this should be met as soon as transmit mode is enabled.
-    RFM.modeTransmit();
-
-
-    // TODO: Add a check to see if packet sent before continuing.
-
-
-    // Only 6 bytes of user data being sent at 4.8kbps
-    // Use a brief (1 second) delay, this should be enough time to complete send.
-    //    delay(1000); // TODO: Need to add a check for end of transmit, will be quicker than needing a delay.
-
+    // Data will be sent once the conditions for Tx have been met.
+    // In packet mode & data already in the FIFO buffer this should
+    // happen as soon as Tx mode is enabled.
+    RFM.modeTransmit(); // Data being sent at 4.8kbps
     while (!(RFM.singleByteRead(RegIrqFlags2) & 0x08))
     {
         // Keeps checking to see if the packet sent bit is set.
@@ -277,6 +260,7 @@ void transmit()
      Serial.println("End: ");  // DEBUG: Print "End: " End of Tx.
     #endif //DEBUG
 }
+
 void transmitter()
 {
     // Transmitter Node Loop
@@ -297,15 +281,18 @@ void receiver()
         {
             listen();
         }
+        #ifdef DEBUG
         //Serial.println("Loop Wait"); // DEBUG: Print "Loop Wait"
+        #endif //DEBUG
     }
 }
 
 void loop()
 {
+    #ifdef DEBUG
     //test_SPI(); // DEBUG: Test SPI Comms
     //test_Reg(); // DEBUG: Test RFM69W Register Values
-
+    #endif //DEBUG
     if (mode == 0xff) // If node configured as a Transmitter.
     {
         // Run transmitter node loop

@@ -30,7 +30,6 @@ class Spi
     // default (without the access specifier).
     private: // Can only be accessed by functions in this class
 
-
     public: // Can be accessed by any function in the program
         Spi() // default constructor
         {
