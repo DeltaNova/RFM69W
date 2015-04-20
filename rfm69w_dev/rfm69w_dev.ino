@@ -19,8 +19,8 @@ void listen();
 void setup_mode();
 void setupRFM();
 
-Spi SPIx;                // Create Global instance of the Spi Class
-RFM69W RFM(SPIx);        // Create Global instance of RFM69W Class
+typedef Spi SPIx;                // Create Global instance of the Spi Class
+RFM69W<SPIx> RFM;        // Create Global instance of RFM69W Class
 uint8_t intFlag = 0x00;  // Setup a flag for monitoring the interrupt.
 uint8_t mode = 0x00;     // Node startup mode. Rx Default.
 void setup() {
