@@ -7,6 +7,7 @@
 #include <Wire.h>       // Used for serial comms.
 #include <stdint.h>     // Enable fixed width integers.
 #include <avr/interrupt.h>  // Required for interrupts.
+#include <avr/power.h>  // Power reduction management.
 #include "spi.h"        // Include my spi library.
 #include "rfm69w.h"     // Include my rfm69w library
 #include "rfm69w_reg.h"     // Register reference for rfm69w
@@ -18,12 +19,14 @@ void setup_int();
 void listen();
 void setup_mode();
 void setupRFM();
+void powerSave();
 
 typedef Spi SPIx;                // Create Global instance of the Spi Class
 RFM69W<SPIx> RFM;        // Create Global instance of RFM69W Class
 uint8_t intFlag = 0x00;  // Setup a flag for monitoring the interrupt.
 uint8_t mode = 0x00;     // Node startup mode. Rx Default.
 void setup() {
+    powerSave();    // Enable powersaving features
     // Set PB0 as Tx/Rx Mode select input
     DDRB &= ~(1 << DDB0);
     // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
@@ -34,6 +37,12 @@ void setup() {
     setupRFM();    // Application Specific Settings RFM69W
     setup_mode();  // Determine the startup mode from status of PB0.
     setup_int();   // Setup Interrupts
+}
+void powerSave() {
+    power_adc_disable(); // Not using ADC
+    power_twi_disable(); // Not using I2C
+    //power_usart0_disable(); // ToDo: Enable this later. Using for debugging.
+
 }
 
 void setupRFM() {
@@ -214,13 +223,17 @@ void ping(int8_t msg) {
 void listen() {
     // Listens for an incomming packet via RFM69W
     // Read the Payload Ready bit from RegIrqFlags2 to see if any data
+    #ifdef DEBUG
     Serial.println("Start Listening: ");
+    #endif // DEBUG
     while (RFM.singleByteRead(RegIrqFlags2) & 0x04) {
     // True whilst FIFO still contains data.
         Serial.print("Rec: ");
         Serial.println(RFM.singleByteRead(RegFifo));
     }
+    #ifdef DEBUG
     Serial.println("Stop Listening.");
+    #endif // DEBUG
     intFlag = 0x00;  // Reset interrupt flag
 }
 
@@ -253,7 +266,9 @@ void transmitter() {
     // Transmitter Node Loop
     while (1) {
         transmit();
+        // TODO: Enter Lower Power Mode between transmissions
         delay(15000);  // Transmit a packet every 15 seconds.
+        // TODO: Wakeup from low power mode before transmitting.
     }
 }
 
