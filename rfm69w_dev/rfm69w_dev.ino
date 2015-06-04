@@ -22,23 +22,27 @@ void listen();
 void setup_mode();
 void setupRFM();
 void powerSave();
+void gotosleep();
+void setup_wdt();
 
 typedef Spi SPIx;                // Create Global instance of the Spi Class
 RFM69W<SPIx> RFM;        // Create Global instance of RFM69W Class
-uint8_t intFlag = 0x00;  // Setup a flag for monitoring the interrupt.
+volatile uint8_t intFlag = 0x00;  // Setup a flag for monitoring the interrupt.
+volatile uint8_t wdtFlag = 0x00;  // Setup a flag for monitoring WDT interrupt.
 uint8_t mode = 0x00;     // Node startup mode. Rx Default.
 void setup() {
-    powerSave();    // Enable powersaving features
+    
     // Set PB0 as Tx/Rx Mode select input
     DDRB &= ~(1 << DDB0);
     // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
     PORTB &= ~(1 << PORTB0);
     Serial.begin(19200);  // Setup Serial Comms
     delay(2000);   // Wait before entering loop
+    powerSave();    // Enable powersaving features
     RFM.setReg();  // Setup the registers & initial mode for the RFM69
     setupRFM();    // Application Specific Settings RFM69W
     setup_mode();  // Determine the startup mode from status of PB0.
-    setup_sleep(); // Setup sleep mode.
+
     setup_int();   // Setup Interrupts
     setup_wdt();   // Setup WDT Timeout Interrupt
     sei();  // Enable interrupts
@@ -46,6 +50,9 @@ void setup() {
 void powerSave() {
     power_adc_disable(); // Not using ADC
     power_twi_disable(); // Not using I2C
+    power_timer0_disable();
+    power_timer1_disable();
+    power_timer2_disable();
     //power_usart0_disable(); // ToDo: Enable this later. Using for debugging.
 
 }
@@ -106,7 +113,7 @@ void setup_wdt() {
     - Make adjustments within 4 clock cycles.
     */
     
-    WDTCSR |= (1<<WDCE)| (1<<WDE) // Set WDCE
+    WDTCSR |= (1<<WDCE)| (1<<WDE); // Set WDCE
      
     /*
     WDTCSR Register
@@ -135,13 +142,21 @@ void setup_wdt() {
     */
            
     // Set Watch1dog Timer for Interrupt Mode, 8 second timeout.
-    WDTCSR = 0xF1;
+    WDTCSR = (1<<WDP3)|(0<<WDP2)|(0<<WDP1)|(1<<WDP0)|
+             (0<<WDE)|(1<<WDIE)|
+             (1<<WDCE)|(1<<WDIF);
 }
 
-void setup_sleep(){
+void gotosleep(){
     // Select the sleep mode to be use and enable it.
     // In this case the Power-down mode is selected.
-    MCUCR |= (1<<SM1)|(1<<SE);
+    //MCUCR |= (1<<SM1)|(1<<SE);
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    sleep_enable();
+    sleep_bod_disable();
+    sleep_mode();
+    sleep_disable();
+    
 }
 
 void setup_int() {
@@ -168,6 +183,7 @@ ISR(PCINT0_vect) {  // PCINT0 is vector for PCINT[7:0]
 ISR(WDT_vect) { // Runs when WDT timeout is reached
     // Dev Note: This ISR is intended only for waking
     // the mcu from a sleep mode. Speed of the ISR is not important in this case.
+    wdtFlag = 0xFF;
 }
 
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect) {
@@ -324,9 +340,9 @@ void transmitter() {
     while (1) {
         transmit();
         // TODO: Enter Lower Power Mode between transmissions
-        wdt_reset(); // Reset the watchdog timer for full sleep cycle
+        //wdt_reset(); // Reset the watchdog timer for full sleep cycle
         //delay(15000);  // Transmit a packet every 15 seconds.
-        sleep_cpu();
+        gotosleep();
         // TODO: Wakeup from low power mode before transmitting.
         // Execution resumes at this point after the ISR is triggered
     }
