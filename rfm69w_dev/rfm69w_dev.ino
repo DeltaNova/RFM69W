@@ -6,6 +6,8 @@
 
 #include <Wire.h>       // Used for serial comms.
 #include <stdint.h>     // Enable fixed width integers.
+#include <avr/wdt.h>    // Includes Inline Macros for working with the WDT
+#include <avr/sleep.h>  // Includes Inline Macros for working with Sleep Modes
 #include <avr/interrupt.h>  // Required for interrupts.
 #include <avr/power.h>  // Power reduction management.
 #include "spi.h"        // Include my spi library.
@@ -36,7 +38,10 @@ void setup() {
     RFM.setReg();  // Setup the registers & initial mode for the RFM69
     setupRFM();    // Application Specific Settings RFM69W
     setup_mode();  // Determine the startup mode from status of PB0.
+    setup_sleep(); // Setup sleep mode.
     setup_int();   // Setup Interrupts
+    setup_wdt();   // Setup WDT Timeout Interrupt
+    sei();  // Enable interrupts
 }
 void powerSave() {
     power_adc_disable(); // Not using ADC
@@ -92,6 +97,53 @@ void setup_mode() {
     return;
 }
 
+void setup_wdt() {
+    // Clear WDRF - Watchdog System Reset Flag to allow WDE to be cleared later.
+    MCUSR &= ~(1<<WDRF);
+    /*
+    To perform adjustments to WDE & prescaler bits:
+    - Set the WDCE - watchdog change enable bit 
+    - Make adjustments within 4 clock cycles.
+    */
+    
+    WDTCSR |= (1<<WDCE)| (1<<WDE) // Set WDCE
+     
+    /*
+    WDTCSR Register
+    - Bit 7 WDIF - Watchdog Interrupt Flag
+    - Bit 6 WDIE - Watchdog Interrupt Enable
+    - Bit 5 WDP3 - Watchdog Timer Prescaler 3
+    - Bit 4 WDCE - Watchdog Change Enable
+    - Bit 3 WDE  - Watchdog System Reset Enable
+    - Bit 2 WDP2 - Watchdog Timer Prescaler 2
+    - Bit 1 WDP1 - Watchdog Timer Prescaler 1
+    - Bit 0 WDP0 - Watchdog Timer Prescaler 0
+         
+    Setup for Interrupt Mode, 8 second timeout
+    ------------------------------------------
+    Prescaler Settings for Timeout of approx 8 seconds.
+    WDP3 = 1, WDP2 = 0, WDP1 = 0, WDP0 = 1
+    
+    To Set Interrupt Mode
+    WDE = 0, WDIE = 1 // Toggle WDIE later to enable/disable interrupt mode.
+    
+    Other Flags
+    WDCE = 1
+    WDIF = 1 // Normally cleared by HW, write 1 to clear
+    
+    Note: In this mode the system reset is disabled.
+    */
+           
+    // Set Watch1dog Timer for Interrupt Mode, 8 second timeout.
+    WDTCSR = 0xF1;
+}
+
+void setup_sleep(){
+    // Select the sleep mode to be use and enable it.
+    // In this case the Power-down mode is selected.
+    MCUCR |= (1<<SM1)|(1<<SE);
+}
+
 void setup_int() {
     // Set PB1 as interrupt input.
     DDRB &= ~(1 << DDB1);
@@ -99,7 +151,6 @@ void setup_int() {
     // RFM69W DIO0 is logic 0 until set. Pull down resistor not used.
     PCICR |= (1 << PCIE0);  // Enable PCMSK0 covering PCINT[7:0]
     PCMSK0 |= (1 << PCINT1);  // Set mask to only interrupt on PCINT1
-    sei();  // Enable interrupts
 }
 
 ISR(PCINT0_vect) {  // PCINT0 is vector for PCINT[7:0]
@@ -113,6 +164,12 @@ ISR(PCINT0_vect) {  // PCINT0 is vector for PCINT[7:0]
     */
     intFlag = 0xff;  // Set interrupt flag.
 }
+
+ISR(WDT_vect) { // Runs when WDT timeout is reached
+    // Dev Note: This ISR is intended only for waking
+    // the mcu from a sleep mode. Speed of the ISR is not important in this case.
+}
+
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect) {
     // SPI - singleByteRead
     Serial.println("SPI - singleByteRead");
@@ -267,9 +324,13 @@ void transmitter() {
     while (1) {
         transmit();
         // TODO: Enter Lower Power Mode between transmissions
-        delay(15000);  // Transmit a packet every 15 seconds.
+        wdt_reset(); // Reset the watchdog timer for full sleep cycle
+        //delay(15000);  // Transmit a packet every 15 seconds.
+        sleep_cpu();
         // TODO: Wakeup from low power mode before transmitting.
+        // Execution resumes at this point after the ISR is triggered
     }
+    
 }
 
 void receiver() {
