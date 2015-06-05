@@ -379,15 +379,9 @@ void receiver() {
 }
 
 void loop() {
-    #ifdef DEBUG
-    // test_SPI();  // DEBUG: Test SPI Comms
-    // test_Reg();  // DEBUG: Test RFM69W Register Values
-    #endif  // DEBUG
     if (mode == 0xff) {     // If node configured as a Transmitter.
-        // Run transmitter node loop
-        transmitter();
+        transmitter();      // Run transmitter node loop
     } else {                // If node configured as a Receiver.
-        // Run receiver node loop
-        receiver();
+        receiver();         // Run transmitter node loop
     }
 }
