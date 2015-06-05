@@ -70,9 +70,7 @@ void powerSave() {
     // Enable Interrupts
     // Note: No need in this case.
     
-    
     power_usart0_disable(); // Disable by default, reenable if needed.
-
 }
 
 void setupRFM() {
@@ -171,6 +169,8 @@ void gotosleep(){
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
     sleep_bod_disable();
+    // TODO: Reset WDT Count.
+    //wdt_reset(); // Reset the watchdog timer for full sleep cycle
     sleep_mode();
     sleep_disable();
     
@@ -350,12 +350,8 @@ void transmit() {
 void transmitter() {
     // Transmitter Node Loop
     while (1) {
-        transmit();
-        // TODO: Enter Lower Power Mode between transmissions
-        //wdt_reset(); // Reset the watchdog timer for full sleep cycle
-        //delay(15000);  // Transmit a packet every 15 seconds.
-        gotosleep();
-        // TODO: Wakeup from low power mode before transmitting.
+        transmit();  // Transmit Packet.
+        gotosleep(); // Enter Low Power Mode until WDT interrupt.
         // Execution resumes at this point after the ISR is triggered
     }
 }
