@@ -53,6 +53,15 @@ void powerSave() {
     power_timer0_disable();
     power_timer1_disable();
     power_timer2_disable();
+    
+    // Disable Interrupts
+    // Note: No need as they are not enabled until after the powerSave function is used.
+    ACSR &= (1<<ACD); // Disable the analogue comparator
+    ACSR |= ~(1<<ACI);// Clear the analogue comparator interrupt if it was trigged from the disable command.
+    // Enable Interrupts
+    // Note: No need in this case.
+    
+    
     //power_usart0_disable(); // ToDo: Enable this later. Using for debugging.
 
 }
