@@ -36,8 +36,16 @@ void setup() {
     DDRB &= ~(1 << DDB0);
     // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
     PORTB &= ~(1 << PORTB0);
+    // TODO: Move this to a more relevent place as Serial comms need to be
+    //       disabled on the Tx Node for power saving.
     Serial.begin(19200);  // Setup Serial Comms
-    delay(2000);   // Wait before entering loop
+    // TODO: Test with delay removed, probably not required. 
+    //delay(2000);   // Wait before entering loop
+    
+    // DEV Note: Will startup power requirements benefit from reordering of the 
+    //           powerSave(), RFM.setReg(), setupRFM() functions?
+    //           The RFM module is likely to be the biggest power draw until it 
+    //           makes it into sleep mode.
     powerSave();    // Enable powersaving features
     RFM.setReg();  // Setup the registers & initial mode for the RFM69
     setupRFM();    // Application Specific Settings RFM69W
@@ -355,7 +363,6 @@ void transmitter() {
         // TODO: Wakeup from low power mode before transmitting.
         // Execution resumes at this point after the ISR is triggered
     }
-    
 }
 
 void receiver() {
