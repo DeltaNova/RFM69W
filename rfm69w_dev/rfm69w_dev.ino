@@ -329,9 +329,7 @@ void listen() {
 
 void transmit() {
     // The SPI communication and registers have been set by setup()
-    #ifdef DEBUG
-    Serial.println("Start: ");  // DEBUG: Print "Start: " Start of Tx.
-    #endif  // DEBUG
+
     // The RFM69W should be in Sleep mode.
     // Load bytes to transmit into the FIFO register.
     ping(2);  // Pass an int to select which msg to send.
@@ -347,9 +345,6 @@ void transmit() {
         // the program has finished with it.
     }
     RFM.modeSleep();  // Return to Sleep mode to save power.
-    #ifdef DEBUG
-    Serial.println("End: ");  // DEBUG: Print "End: " End of Tx.
-    #endif  // DEBUG
 }
 
 void transmitter() {
