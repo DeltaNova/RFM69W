@@ -366,15 +366,12 @@ void transmitter() {
 }
 
 void receiver() {
-    // Receiver Node Loop
-    while (1) {
-        // If the interrupt flag has been set then listen for incomming data.
+    // Continuously check for incomming data
+    // Whilst interrupt flag set, listen for incomming data.
+    while (1) {             
         while (intFlag == 0xff) {
             listen();
         }
-        #ifdef DEBUG
-        // Serial.println("Loop Wait");  // DEBUG: Print "Loop Wait"
-        #endif  // DEBUG
     }
 }
 
