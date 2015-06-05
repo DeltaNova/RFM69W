@@ -202,7 +202,7 @@ ISR(WDT_vect) { // Runs when WDT timeout is reached
     // the mcu from a sleep mode. Speed of the ISR is not important in this case.
     wdtFlag = 0xFF;
 }
-
+/*
 void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect) {
     // SPI - singleByteRead
     Serial.println("SPI - singleByteRead");
@@ -271,7 +271,7 @@ void test_SPI() {
     test_singleByteWrite(0x2d, 0x03);
     Serial.println();
 }
-
+*/
 void ping(int8_t msg) {
     // Load selected data into FIFO Register for transmission
 
