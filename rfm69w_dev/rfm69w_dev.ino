@@ -30,6 +30,7 @@ RFM69W<SPIx> RFM;        // Create Global instance of RFM69W Class
 volatile uint8_t intFlag = 0x00;  // Setup a flag for monitoring the interrupt.
 volatile uint8_t wdtFlag = 0x00;  // Setup a flag for monitoring WDT interrupt.
 uint8_t mode = 0x00;     // Node startup mode. Rx Default.
+
 void setup() {
     
     // Set PB0 as Tx/Rx Mode select input
@@ -38,7 +39,7 @@ void setup() {
     PORTB &= ~(1 << PORTB0);
     // TODO: Move this to a more relevent place as Serial comms need to be
     //       disabled on the Tx Node for power saving.
-    Serial.begin(19200);  // Setup Serial Comms
+    //Serial.begin(19200);  // Setup Serial Comms // Moved to Rx in setup_mode();
     // TODO: Test with delay removed, probably not required. 
     //delay(2000);   // Wait before entering loop
     
@@ -70,7 +71,7 @@ void powerSave() {
     // Note: No need in this case.
     
     
-    //power_usart0_disable(); // ToDo: Enable this later. Using for debugging.
+    power_usart0_disable(); // Disable by default, reenable if needed.
 
 }
 
@@ -105,15 +106,14 @@ void setup_mode() {
     if (PINB & (1 << PINB0)) {
         // Tx Mode Selected
         mode = 0xff;  // Change node mode
-        #ifdef DEBUG
-        Serial.println("Tx Mode");  // DEBUG: Print "Tx Mode"
-        #endif  // DEBUG
         // RFM69W configured to startup in sleep mode and will wake to
         // transmit as required.
         // TODO: Check interrupt settings / DIO0 map for sleep mode
     } else {
         // Rx Mode Selected
         #ifdef DEBUG
+        power_usart0_enable();// Enable Serial comms for Rx Mode.
+        Serial.begin(19200);  // Setup Serial Comms
         Serial.println("Rx Mode");  // DEBUG: Print "Rx Mode"
         #endif
         RFM.modeReceive();
