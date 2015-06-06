@@ -40,18 +40,19 @@ void setup() {
     // TODO: Move this to a more relevent place as Serial comms need to be
     //       disabled on the Tx Node for power saving.
     //Serial.begin(19200);  // Setup Serial Comms // Moved to Rx in setup_mode();
-    // TODO: Test with delay removed, probably not required. 
+    // TODO: Test with delay removed, probably not required.
     //delay(2000);   // Wait before entering loop
-    
-    // DEV Note: Will startup power requirements benefit from reordering of the 
+
+    // DEV Note: Will startup power requirements benefit from reordering of the
     //           powerSave(), RFM.setReg(), setupRFM() functions?
-    //           The RFM module is likely to be the biggest power draw until it 
+    //           The RFM module is likely to be the biggest power draw until it
     //           makes it into sleep mode.
-    powerSave();    // Enable powersaving features
+
     RFM.setReg();  // Setup the registers & initial mode for the RFM69
     setupRFM();    // Application Specific Settings RFM69W
     setup_mode();  // Determine the startup mode from status of PB0.
-
+    // Place powerSave() after setupRFM as the SPI bus is disabled until required,
+    powerSave();    // Enable powersaving features
     setup_int();   // Setup Interrupts
     setup_wdt();   // Setup WDT Timeout Interrupt
     sei();  // Enable interrupts
