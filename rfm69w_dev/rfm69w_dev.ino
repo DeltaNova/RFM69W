@@ -63,14 +63,18 @@ void powerSave() {
     power_timer0_disable();
     power_timer1_disable();
     power_timer2_disable();
-    
+    //power_spi_disable();  // Todo: Might need to reenable for Rx Mode later.
+
     // Disable Interrupts
     // Note: No need as they are not enabled until after the powerSave function is used.
-    ACSR &= (1<<ACD); // Disable the analogue comparator
-    ACSR |= ~(1<<ACI);// Clear the analogue comparator interrupt if it was trigged from the disable command.
+    //ACSR |= ~(1<<ACI);// Clear the analogue comparator interrupt if it was trigged from the disable command.
+    //ACSR &= (1<<ACD); // Disable the analogue comparator
+    ADCSRA = 0; // Disable ADC
+
+
     // Enable Interrupts
     // Note: No need in this case.
-    
+
     power_usart0_disable(); // Disable by default, reenable if needed.
 }
 
