@@ -206,76 +206,7 @@ ISR(WDT_vect) { // Runs when WDT timeout is reached
     // the mcu from a sleep mode. Speed of the ISR is not important in this case.
     wdtFlag = 0xFF;
 }
-/*
-void test_singleByteRead(uint8_t byteAddr, uint8_t byteExpect) {
-    // SPI - singleByteRead
-    Serial.println("SPI - singleByteRead");
-    uint8_t datain = RFM.singleByteRead(byteAddr);
-    Serial.print("ADDR: ");
-    Serial.println(byteAddr, HEX);
-    Serial.print("Expected Data: ");
-    Serial.println(byteExpect, HEX);
-    Serial.print("Actual Data: ");
-    Serial.println(datain, HEX);
-    Serial.println();
-    delay(1000);
-}
 
-void test_spiReg() {
-    // Print the SPI Registers to Serial Output
-    Serial.println("SPI Registers");
-    Serial.print("SPCR: ");
-    Serial.println(SPCR, BIN);
-    Serial.print("SPSR: ");
-    Serial.println(SPSR, BIN);
-    Serial.println();
-    delay(1000);
-}
-
-void test_singleByteWrite(uint8_t byteAddr, uint8_t dataByte) {
-    // SPI - singleByteWrite
-    Serial.println("SPI - singleByteWrite");
-    RFM.singleByteWrite(byteAddr, dataByte);
-    Serial.print("ADDR: ");
-    Serial.println(byteAddr, HEX);
-    Serial.print("Sent Data: ");
-    Serial.println(dataByte);
-    Serial.println();
-    delay(1000);
-}
-
-void test_Reg() {
-    // Code used to test the register values on the rfm69w
-    // Assumes working SPI connection
-    Serial.println("Check Reg Init");
-    test_singleByteRead(RegLna, 0x88);
-    test_singleByteRead(RegRxBw, 0x55);
-    test_singleByteRead(RegAfcBw, 0x8b);
-    test_singleByteRead(RegDioMapping2, 0x07);
-    test_singleByteRead(RegRssiThresh, 0xe4);
-    test_singleByteRead(RegSyncValue1, 0x01);
-    test_singleByteRead(RegSyncValue2, 0x01);
-    test_singleByteRead(RegSyncValue3, 0x01);
-    test_singleByteRead(RegSyncValue4, 0x01);
-    test_singleByteRead(RegSyncValue5, 0x01);
-    test_singleByteRead(RegSyncValue6, 0x01);
-    test_singleByteRead(RegSyncValue7, 0x01);
-    test_singleByteRead(RegSyncValue8, 0x01);
-    test_singleByteRead(RegFifoThresh, 0x8f);
-    test_singleByteRead(RegTestDagc, 0x30);
-    Serial.println("Check Custom Reg Init");
-    test_singleByteRead(RegDataModul, 0x08);
-}
-
-void test_SPI() {
-    test_spiReg();
-    test_singleByteRead(0x2d, 0x03);
-    test_singleByteWrite(0x2d, 0x04);
-    test_singleByteRead(0x2d, 0x04);
-    test_singleByteWrite(0x2d, 0x03);
-    Serial.println();
-}
-*/
 void ping(int8_t msg) {
     // Load selected data into FIFO Register for transmission
 
