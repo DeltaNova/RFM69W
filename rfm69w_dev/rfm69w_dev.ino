@@ -32,7 +32,6 @@ volatile uint8_t wdtFlag = 0x00;  // Setup a flag for monitoring WDT interrupt.
 uint8_t mode = 0x00;     // Node startup mode. Rx Default.
 
 void setup() {
-    
     // Set PB0 as Tx/Rx Mode select input
     DDRB &= ~(1 << DDB0);
     // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
@@ -129,12 +128,12 @@ void setup_wdt() {
     MCUSR &= ~(1<<WDRF);
     /*
     To perform adjustments to WDE & prescaler bits:
-    - Set the WDCE - watchdog change enable bit 
+    - Set the WDCE - watchdog change enable bit
     - Make adjustments within 4 clock cycles.
     */
-    
+
     WDTCSR |= (1<<WDCE)| (1<<WDE); // Set WDCE
-     
+
     /*
     WDTCSR Register
     - Bit 7 WDIF - Watchdog Interrupt Flag
@@ -145,22 +144,22 @@ void setup_wdt() {
     - Bit 2 WDP2 - Watchdog Timer Prescaler 2
     - Bit 1 WDP1 - Watchdog Timer Prescaler 1
     - Bit 0 WDP0 - Watchdog Timer Prescaler 0
-         
+
     Setup for Interrupt Mode, 8 second timeout
     ------------------------------------------
     Prescaler Settings for Timeout of approx 8 seconds.
     WDP3 = 1, WDP2 = 0, WDP1 = 0, WDP0 = 1
-    
+
     To Set Interrupt Mode
     WDE = 0, WDIE = 1 // Toggle WDIE later to enable/disable interrupt mode.
-    
+
     Other Flags
     WDCE = 1
     WDIF = 1 // Normally cleared by HW, write 1 to clear
-    
+
     Note: In this mode the system reset is disabled.
     */
-           
+
     // Set Watch1dog Timer for Interrupt Mode, 8 second timeout.
     WDTCSR = (1<<WDP3)|(0<<WDP2)|(0<<WDP1)|(1<<WDP0)|
              (0<<WDE)|(1<<WDIE)|
@@ -178,7 +177,7 @@ void gotosleep(){
     //wdt_reset(); // Reset the watchdog timer for full sleep cycle
     sleep_mode();
     sleep_disable();
-    
+
 }
 
 void setup_int() {
@@ -364,7 +363,7 @@ void transmitter() {
 void receiver() {
     // Continuously check for incomming data
     // Whilst interrupt flag set, listen for incomming data.
-    while (1) {             
+    while (1) {
         while (intFlag == 0xff) {
             listen();
         }
