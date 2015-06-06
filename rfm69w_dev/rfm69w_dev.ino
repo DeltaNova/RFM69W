@@ -354,7 +354,9 @@ void transmit() {
 void transmitter() {
     // Transmitter Node Loop
     while (1) {
+        //power_spi_enable();
         transmit();  // Transmit Packet.
+        //power_spi_disable();
         gotosleep(); // Enter Low Power Mode until WDT interrupt.
         // Execution resumes at this point after the ISR is triggered
     }
