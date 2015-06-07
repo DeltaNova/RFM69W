@@ -32,10 +32,7 @@ volatile uint8_t wdtFlag = 0x00;  // Setup a flag for monitoring WDT interrupt.
 uint8_t mode = 0x00;     // Node startup mode. Rx Default.
 
 void setup() {
-    // Set PB0 as Tx/Rx Mode select input
-    DDRB &= ~(1 << DDB0);
-    // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
-    PORTB &= ~(1 << PORTB0);
+
     // TODO: Move this to a more relevent place as Serial comms need to be
     //       disabled on the Tx Node for power saving.
     //Serial.begin(19200);  // Setup Serial Comms // Moved to Rx in setup_mode();
@@ -104,6 +101,10 @@ void setupRFM() {
 }
 
 void setup_mode() {
+    // Set PB0 as Tx/Rx Mode select input
+    DDRB &= ~(1 << DDB0);
+    // No internal pullup on PB0, hardwired to VCC (Tx) or GND (Rx).
+    PORTB &= ~(1 << PORTB0);
     // Configure the node startup mode as a Tx or Rx.
     if (PINB & (1 << PINB0)) {
         // Tx Mode Selected
