@@ -188,7 +188,7 @@ void gotosleep(){
     sleep_bod_disable();
     // TODO: Reset WDT Count.
     //wdt_reset(); // Reset the watchdog timer for full sleep cycle
-    sleep_mode();
+    sleep_cpu();
     sleep_disable();
 
 }
