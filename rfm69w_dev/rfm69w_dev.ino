@@ -50,7 +50,7 @@ void setup() {
     //setup_mode();  // Determine the startup mode from status of PB0.
     setup_mode2(); // Force Tx Mode.
     // Place powerSave() after setupRFM as the SPI bus is disabled until required,
-    powerSave();    // Enable powersaving features
+    //powerSave();    // Enable powersaving features
     setup_int();   // Setup Interrupts
     setup_wdt();   // Setup WDT Timeout Interrupt
     sei();  // Enable interrupts
@@ -67,8 +67,9 @@ void powerSave() {
     // Note: No need as they are not enabled until after the powerSave function is used.
     //ACSR |= ~(1<<ACI);// Clear the analogue comparator interrupt if it was trigged from the disable command.
     //ACSR &= (1<<ACD); // Disable the analogue comparator
-    ADCSRA = 0; // Disable ADC
-
+    //ADCSRA = 0; // Disable ADC
+    //ADCSRA &= ~(1<<ADEN);
+    //ADCSRA |= (1<<ADEN);
 
     // Enable Interrupts
     // Note: No need in this case.
@@ -185,7 +186,7 @@ void gotosleep(){
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
     // Todo: Does turning off the external interrupts INT1,INT0 reduce sleep power?
-    EIMSK = 0x00;
+    //EIMSK = 0x00;
 
     /*
     Dev Note:
@@ -233,7 +234,7 @@ ISR(PCINT0_vect) {  // PCINT0 is vector for PCINT[7:0]
 ISR(WDT_vect) { // Runs when WDT timeout is reached
     // Dev Note: This ISR is intended only for waking
     // the mcu from a sleep mode. Speed of the ISR is not important in this case.
-    wdtFlag = 0xFF;
+    //wdtFlag = 0xFF;
 }
 
 void ping(int8_t msg) {
