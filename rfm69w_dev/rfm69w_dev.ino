@@ -173,6 +173,9 @@ void gotosleep(){
     //MCUCR |= (1<<SM1)|(1<<SE);
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
+    // Todo: Does turning off the external interrupts INT1,INT0 reduce sleep power?
+    EIMSK = 0x00;
+
     /*
     Dev Note:
 
