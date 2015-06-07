@@ -200,13 +200,18 @@ void gotosleep(){
     sleep_mode();
 
     */
+    ADCSRA &= ~(1<<ADEN);
+    cli();
     sleep_enable();
 
     // TODO: Reset WDT Count.
     //wdt_reset(); // Reset the watchdog timer for full sleep cycle
     sleep_bod_disable(); // Timing critical - must be done right before endtering sleep mode.
+    sei();
     sleep_cpu();
     sleep_disable();
+    sei();
+    ADCSRA |= (1<<ADEN);
 
 }
 
