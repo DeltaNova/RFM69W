@@ -20,6 +20,7 @@
 void setup_int();
 void listen();
 void setup_mode();
+void setup_mode2();
 void setupRFM();
 void powerSave();
 void gotosleep();
@@ -46,7 +47,8 @@ void setup() {
 
     RFM.setReg();  // Setup the registers & initial mode for the RFM69
     setupRFM();    // Application Specific Settings RFM69W
-    setup_mode();  // Determine the startup mode from status of PB0.
+    //setup_mode();  // Determine the startup mode from status of PB0.
+    setup_mode2(); // Force Tx Mode.
     // Place powerSave() after setupRFM as the SPI bus is disabled until required,
     powerSave();    // Enable powersaving features
     setup_int();   // Setup Interrupts
@@ -123,6 +125,15 @@ void setup_mode() {
     }
     return;
 }
+
+void setup_mode2() {
+    /*
+    Dev Note:
+    Want to test power consumption without using PORTB0 to select
+    between Tx/Rx modes.
+    */
+    mode=0xff;  // Force Tx Mode.
+    }
 
 void setup_wdt() {
     // Clear WDRF - Watchdog System Reset Flag to allow WDE to be cleared later.
