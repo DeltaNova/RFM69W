@@ -171,6 +171,19 @@ void gotosleep(){
     // In this case the Power-down mode is selected.
     //MCUCR |= (1<<SM1)|(1<<SE);
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+
+    /*
+    Dev Note:
+
+    // This sequence....
+    sleep_enable();
+    sleep_cpu();
+    sleep_disable();
+
+    // ... can be replace by this equivalent function.
+    sleep_mode();
+
+    */
     sleep_enable();
     sleep_bod_disable();
     // TODO: Reset WDT Count.
