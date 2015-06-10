@@ -3,7 +3,6 @@
 // Author: M. Tunstall
 // NOTE: This is heavily commented for my own learning/reference.
 
-
 #include <Wire.h>       // Used for serial comms.
 #include <stdint.h>     // Enable fixed width integers.
 #include <avr/wdt.h>    // Includes Inline Macros for working with the WDT
@@ -34,12 +33,6 @@ uint8_t mode = 0x00;     // Node startup mode. Rx Default.
 
 void setup() {
 
-    // TODO: Move this to a more relevent place as Serial comms need to be
-    //       disabled on the Tx Node for power saving.
-    //Serial.begin(19200);  // Setup Serial Comms // Moved to Rx in setup_mode();
-    // TODO: Test with delay removed, probably not required.
-    //delay(2000);   // Wait before entering loop
-
     // DEV Note: Will startup power requirements benefit from reordering of the
     //           powerSave(), RFM.setReg(), setupRFM() functions?
     //           The RFM module is likely to be the biggest power draw until it
@@ -62,6 +55,7 @@ void powerSave() {
     power_timer1_disable();
     power_timer2_disable();
     //power_spi_disable();  // Todo: Might need to reenable for Rx Mode later.
+    power_usart0_disable(); // Disable by default, reenable if needed.
 
     // Disable Interrupts
     // Note: No need as they are not enabled until after the powerSave function is used.
@@ -70,11 +64,6 @@ void powerSave() {
     //ADCSRA = 0; // Disable ADC
     //ADCSRA &= ~(1<<ADEN);
     //ADCSRA |= (1<<ADEN);
-
-    // Enable Interrupts
-    // Note: No need in this case.
-
-    power_usart0_disable(); // Disable by default, reenable if needed.
 }
 
 void setupRFM() {
@@ -192,21 +181,20 @@ void gotosleep(){
 
     /*
     Dev Note:
+        // This sequence....
+        sleep_enable();
+        sleep_cpu();
+        sleep_disable();
 
-    // This sequence....
-    sleep_enable();
-    sleep_cpu();
-    sleep_disable();
-
-    // ... can be replace by this equivalent function.
-    sleep_mode();
-
+        // ... can be replace by this equivalent function.
+        sleep_mode();
     */
+    
     ADCSRA &= ~(1<<ADEN);
     cli();
     sleep_enable();
 
-    // TODO: Reset WDT Count.
+    // TODO: Reset WDT Count. Might not make a huge difference for this application.
     //wdt_reset(); // Reset the watchdog timer for full sleep cycle
     sleep_bod_disable(); // Timing critical - must be done right before endtering sleep mode.
     sei();
@@ -214,7 +202,6 @@ void gotosleep(){
     sleep_disable();
     sei();
     ADCSRA |= (1<<ADEN);
-
 }
 
 void setup_int() {
@@ -241,10 +228,9 @@ ISR(PCINT0_vect) {  // PCINT0 is vector for PCINT[7:0]
 ISR(WDT_vect) { // Runs when WDT timeout is reached
     // Dev Note: This ISR is intended only for waking
     // the mcu from a sleep mode. Speed of the ISR is not important in this case.
-    //wdtFlag = 0xFF;
 }
 
-void ping(int8_t msg) {
+void ping(int8_t msg) { //TODO: This is development code and needs to be replace with something more functional.
     // Load selected data into FIFO Register for transmission
 
     // Sends teststring stored in array via RFM69W
@@ -322,9 +308,7 @@ void transmit() {
 void transmitter() {
     // Transmitter Node Loop
     while (1) {
-        //power_spi_enable();
         transmit();  // Transmit Packet.
-        //power_spi_disable();
         gotosleep(); // Enter Low Power Mode until WDT interrupt.
         // Execution resumes at this point after the ISR is triggered
     }
