@@ -79,6 +79,8 @@ void powerSave() {
 
 void setupRFM() {
     // Write Custom Setup Values to registers
+    // TODO: There are defaults that the the RFM library loads can this be merge to 
+    //       reduce the number of changes. No need to change a value and change it back.
 
     // Data Modulation
     // - Packet Mode, OOK, No Shaping
