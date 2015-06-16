@@ -31,17 +31,25 @@ include ~/bin/arduino.mk
 CPPFLAGS += -g
 # Generate program .map at link stage
 LINKFLAGS += -Wl,-Map,$(TARGET).map
-
+ICSPFLAGS += -c usbtiny -p m328p
 # Locate avr-objdump on system
 OBJDUMP := $(call findsoftware,avr-objdump)
 
 # Create Additional Targets
-.PHONY: list
+.PHONY: list icsp icsp_test
 
 # Create a listing of asm and C source code
 list: $(TARGET).elf
 	@echo "Generating Listing"
 	$(OBJDUMP) -h -S $(TARGET).elf > $(TARGET).lst
+
+icsp: $(TARGET).hex
+	@echo "Upload via ICSP"
+	$(AVRDUDE) $(ICSPFLAGS) -v -e -U flash:w:$(TARGET).hex -U lock:w:0x0f:m
+
+icsp_test:
+	@echo "ICSP Comms Test"
+	$(AVRDUDE) $(ICSPFLAGS)
 
 # Override clean target to remove additonal files
 clean:
