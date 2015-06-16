@@ -29,6 +29,8 @@
 
 # Hex Program Files
 *.hex
+*.lst
+*.map
 
 # Hidden Folders
 .dep/
