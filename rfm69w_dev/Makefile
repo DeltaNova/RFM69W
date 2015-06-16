@@ -29,6 +29,8 @@ include ~/bin/arduino.mk
 
 # Add '-g' to compiler flag to embed debug info (doesn't end up in .hex)
 CPPFLAGS += -g
+# Generate program .map at link stage
+LINKFLAGS += -Wl,-Map,$(TARGET).map
 
 # Locate avr-objdump on system
 OBJDUMP := $(call findsoftware,avr-objdump)
@@ -40,3 +42,10 @@ OBJDUMP := $(call findsoftware,avr-objdump)
 list: $(TARGET).elf
 	@echo "Generating Listing"
 	$(OBJDUMP) -h -S $(TARGET).elf > $(TARGET).lst
+
+# Override clean target to remove additonal files
+clean:
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).elf $(TARGET).hex $(ARDUINOLIB) *~
+	rm -rf .lib .dep
+	rm -f $(TARGET).map $(TARGET).lst
