@@ -24,5 +24,19 @@ include ~/bin/arduino.mk
 # Arduino Makefile downloaded from:
 # http://ed.am/dev/make/arduino-mk
 
+# Override some of the included Makefile settings
+# ===============================================
 
+# Add '-g' to compiler flag to embed debug info (doesn't end up in .hex)
+CPPFLAGS += -g
 
+# Locate avr-objdump on system
+OBJDUMP := $(call findsoftware,avr-objdump)
+
+# Create Additional Targets
+.PHONY: list
+
+# Create a listing of asm and C source code
+list: $(TARGET).elf
+	@echo "Generating Listing"
+	$(OBJDUMP) -h -S $(TARGET).elf > $(TARGET).lst
